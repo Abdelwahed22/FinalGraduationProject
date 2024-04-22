@@ -66,7 +66,8 @@ class StudentController extends Controller
             $file= $request->file('profile_image');
             $extention = $file->getClientOriginalExtension();
             $filename = time().'.'. $extention;
-            $file->move('uploads/students/',$filename);
+            $file->move('uploads/students/', $filename);
+            dd($filename);
             $student->profile_image=$filename;
         }
         $student->Update();

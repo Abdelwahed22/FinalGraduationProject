@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Role;
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,4 +40,17 @@ require __DIR__.'/auth.php';
 
  })->middleware('auth');
 
+ Route::get("create_admin_role",function (){
+      $role =Role::create(['name' => 'Admin']);
+      return \App\Helpers\ApiResponse::sendResponse(201,"admin created successfully".Auth::user()->name);
+ })->middleware('auth');
 
+Route::get("create_co_admin_role",function (){
+    return $role =Role::create(['name' => 'co-Admin']);
+
+})->middleware('auth');
+
+Route::get("assign_admin_role",function (){
+    $user=Auth::user();
+    $user->assignRole('Admin');
+});

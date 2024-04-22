@@ -18,6 +18,11 @@ class StudentController extends Controller
         return view('student.create');
     }
     public function store(Request $request){
+
+        $request->validate([
+            "profile_image" => "file|max:2048",
+        ]);
+
         $student = new Student();
         $student->name=$request->input('name');
         $student->phone=$request->input('phone');
@@ -28,7 +33,6 @@ class StudentController extends Controller
             $extention = $file->getClientOriginalExtension();
             $filename = time().'.'. $extention;
             $file->move('uploads/students/',$filename);
-            dd($filename);
             $student->profile_image=$filename;
         }
         $student->save();

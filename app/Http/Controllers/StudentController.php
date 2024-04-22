@@ -28,6 +28,7 @@ class StudentController extends Controller
             $extention = $file->getClientOriginalExtension();
             $filename = time().'.'. $extention;
             $file->move('uploads/students/',$filename);
+            dd($filename);
             $student->profile_image=$filename;
         }
         $student->save();
@@ -67,7 +68,6 @@ class StudentController extends Controller
             $extention = $file->getClientOriginalExtension();
             $filename = time().'.'. $extention;
             $file->move('uploads/students/', $filename);
-            dd($filename);
             $student->profile_image=$filename;
         }
         $student->Update();

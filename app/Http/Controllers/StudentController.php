@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ApiResponse;
 use App\Models\Student;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
@@ -58,8 +59,15 @@ class StudentController extends Controller
     }
 ///// need api
     public function update(Request $request , $id){
+        $validated = $request->validate([
+            'name' => 'required',
+//            'phone' => 'required|',
+            'phone' => 'required|numeric|regex:/(01)[0-9]{9}/
+',
+        ]);
         $student=Student::find($id);
-        $student->name=$request->input('name');
+        $student->name = $request->input('name');
+//        $student->name = $request->input('name') ?? ($student->name ?? '');
         $student->phone=$request->input('phone');
 
         if($request->hasFile('profile_image')){
@@ -76,7 +84,12 @@ class StudentController extends Controller
         }
         $student->Update();
 
-        return redirect()->back()->with('status','Student image Updated successfully');
+//        return redirect()->back()->with('status','Student image Updated successfully');
+        return ApiResponse::sendResponse(201,"updated successfully",[
+           $student->name,
+            $student->phone,
+           asset("/uploads/students/". $student->profile_image),
+        ]);
 
 
     }

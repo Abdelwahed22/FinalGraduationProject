@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QrController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,13 @@ Route::middleware('auth')->group(function () {
     Route::get('delete-student/{id}',[StudentController::class,'destroy']);
 
 
+    //////// QR ///////
+
+
+    Route::get('create-qrcode',[QrController::class,'index']);
+    Route::post('qrcode',[QrController::class,'create'])->name('qr');
+
+
 
 
 });
@@ -53,4 +61,10 @@ Route::get("create_co_admin_role",function (){
 Route::get("assign_admin_role",function (){
     $user=Auth::user();
     $user->assignRole('Admin');
+});
+
+Route::get("assign_co_admin_role",function (){
+    $user=Auth::user();
+
+    $user->assignRole('co_Admin');
 });

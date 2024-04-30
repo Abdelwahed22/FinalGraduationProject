@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\ActiveUser;
 use App\Http\Controllers\api\StudentController;
+use App\Http\Controllers\ِStudentController;
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogOutController;
+use App\Http\Controllers\QrController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\RolesController;
 use App\Models\User;
@@ -32,10 +34,17 @@ Route::post('password/reset', ResetPasswordController::class);
 
 Route::group(['middleware' => ['auth:sanctum','role:Admin|co-Admin']], function () {
 
-    Route::post('user/{id}/block', [ActiveUser::class,'Active']);//اعمل بلوك واشيل البلوك
+    Route::post('block/{id}', [ActiveUser::class,'Active'])->middleware(['role:Admin']);//اعمل بلوك واشيل البلوك
 
     Route::get('users', function(){
-    return User::withoutRole(['Admin','co-Admin'])->get();//يرجع كل اليوزرس
+        if ( User::withoutRole(['Admin','co-Admin'])){
+            $users=User::withoutRole(['Admin','co-Admin'])->get();//يرجع كل اليوزرس
+            return \App\Helpers\ApiResponse::sendResponse(201,"users",$users);
+        }
+        else{
+            return \App\Helpers\ApiResponse::sendResponse(404,"unAuthorized");
+        }
+
     });
 
  });
@@ -75,4 +84,12 @@ Route::post('/updateSettings', [ApiMessagesController::class, 'updateSettings'])
     Route::get('/students/{id}',[StudentController::class,'show']);
     Route::delete('/students/{id}',[StudentController::class,'destroy']);
     Route::post('/students/{id}',[StudentController::class,'update']);
+
+
+
+////////////////////////////////// QR code/////////////////////
+
+
+
+    Route::post('qrcode',[QrController::class,'create'])->name('qr');
 });

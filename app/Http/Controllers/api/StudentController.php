@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -43,6 +44,8 @@ class StudentController extends Controller
         ], status: 200);
 
 
+
+
     }
     public function show($id){
 
@@ -54,8 +57,15 @@ class StudentController extends Controller
 
     ///// need api
     public function update(Request $request , $id){
+        $validated = $request->validate([
+            'name' => 'required',
+//            'phone' => 'required|',
+            'phone' => 'required|numeric|regex:/(01)[0-9]{9}/
+',
+        ]);
         $student=Student::find($id);
-        $student->name=$request->input('name');
+        $student->name = $request->input('name');
+//        $student->name = $request->input('name') ?? ($student->name ?? '');
         $student->phone=$request->input('phone');
 
         if($request->hasFile('profile_image')){
@@ -67,18 +77,25 @@ class StudentController extends Controller
             $file= $request->file('profile_image');
             $extention = $file->getClientOriginalExtension();
             $filename = time().'.'. $extention;
-            $file->move('uploads/students/',$filename);
+            $file->move('uploads/students/', $filename);
             $student->profile_image=$filename;
         }
         $student->Update();
 
-       // return redirect()->back()->with('status','Student image Updated successfully');
-        return ('Student image Updated successfully');
+//        return redirect()->back()->with('status','Student image Updated successfully');
+        return ApiResponse::sendResponse(201,"updated successfully",[
+            $student->name,
+            $student->phone,
+            asset("/uploads/students/". $student->profile_image),
+        ]);
 
 
     }
     ///need api
     public function destroy($id){
+        if (Student::find($id)){
+
+
         $student=Student::find($id);
         $destination = 'uploads/students/'.$student->profile_image;
         if (File::exists( $destination)){
@@ -86,8 +103,13 @@ class StudentController extends Controller
         }
         $student->delete();
       //  return redirect()->back()->with('status','Student image deleted  successfully');
-        return ('person image deleted  successfully');
 
+
+       return ApiResponse::sendResponse(201,"image deleted successfully");
+        }
+        else{
+            return ApiResponse::sendResponse(404,"image not found");
+        }
     }
 
 

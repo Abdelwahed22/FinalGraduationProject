@@ -60,9 +60,9 @@ class StudentController extends Controller
         $validated = $request->validate([
             'name' => 'required',
 //            'phone' => 'required|',
-            'phone' => 'required|numeric|regex:/(01)[0-9]{9}/
-',
+            'phone' => 'required|string|size:11',
         ]);
+
         $student=Student::find($id);
         $student->name = $request->input('name');
 //        $student->name = $request->input('name') ?? ($student->name ?? '');
@@ -80,7 +80,7 @@ class StudentController extends Controller
             $file->move('uploads/students/', $filename);
             $student->profile_image=$filename;
         }
-        $student->Update();
+        $student->save();
 
 //        return redirect()->back()->with('status','Student image Updated successfully');
         return ApiResponse::sendResponse(201,"updated successfully",[

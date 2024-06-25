@@ -46,7 +46,7 @@ class RegisteredUserController extends Controller
             $file = $request->file('national_id');
             $extension = $file->getClientOriginalExtension();
             $filename = time() . '.' . $extension;
-            $file->move('uploads/ids', $filename);
+            $file->move('uploads/ids/', $filename);
             $user->national_id = $filename;
             $user->save();
         }

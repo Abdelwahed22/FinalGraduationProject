@@ -22,14 +22,18 @@ class LoginController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
-            return ApiResponse::sendResponse(401,'Email or password is invalid',null);
+            return ApiResponse::sendResponse(401,'User accound doesnot exist',null);
         }
 
         $device_name=$request->post('device_name',$request->userAgent());
+        $isadmin=$user->getRoleNames();
+        $isadmin=$user->hasRole("Admin")||$user->hasRole("co-Admin");
+
         return ApiResponse::sendResponse(201,'User login successfuly',
-        ['token'=>$user->createToken($device_name)->plainTextToken,
-        'name'=>$user->name,
-        'email'=>$user->email]);
+            ['token'=>$user->createToken($device_name)->plainTextToken,
+                'name'=>$user->name,
+                'email'=>$user->email,
+                "isadmin"=>$isadmin,]);
 
     }
 }

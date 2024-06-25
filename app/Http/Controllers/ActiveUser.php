@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class ActiveUser extends Controller
 {
     public function Active(Request $request,$id) {
-        $auth=Auth::user();
+//        $auth=Auth::user();
 
         $user=User::withoutRole(['Admin'])->find($id);
 
@@ -18,14 +18,14 @@ class ActiveUser extends Controller
             if($user->id!=$request->user()->id){
 
 
-                if($user->Active=="Active"){
-                    $user->Active="Un-Active";
+                if($user->Active=="unblocked"){
+                    $user->Active="blocked";
                     $user->save();
 
                     return ApiResponse::sendResponse(201,'User blocked',null);
                 }
                 else{
-                    $user->Active="Active";
+                    $user->Active="unblocked";
                     $user->save();
 
                     return ApiResponse::sendResponse(201,'User unblocked',null);
@@ -40,8 +40,7 @@ class ActiveUser extends Controller
             return ApiResponse::sendResponse(404,'you can not block your self',null);
         }
         else{
-            return ApiResponse::sendResponse(404,'invalid Action',null);
+            return ApiResponse::sendResponse(404,'invalid user',null);
         }
-
     }
 }

@@ -27,6 +27,8 @@ class StudentController extends Controller
         $student = new Student();
         $student->name=$request->input('name');
         $student->phone=$request->input('phone');
+        $student->nursing_home=$request->input('nursing_home');
+        $student->location=$request->input('location');
         // $student->id=$request->input('id');
 
         if($request->hasFile('profile_image')){

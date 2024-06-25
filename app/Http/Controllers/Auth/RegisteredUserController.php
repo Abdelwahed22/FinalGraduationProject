@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Helpers\ApiResponse;
@@ -32,8 +31,9 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'national_id' => ['nullable', 'file'],
         ]);
 
         $user = User::create([
@@ -42,6 +42,19 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return ApiResponse::sendResponse("201","registered Successfully",[]);
+        if ($request->hasFile('national_id')) {
+            $file = $request->file('national_id');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '.' . $extension;
+            $file->move('uploads/ids', $filename);
+            $user->national_id = $filename;
+            $user->save();
+        }
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return ApiResponse::sendResponse("201", "Registered Successfully", []);
     }
 }

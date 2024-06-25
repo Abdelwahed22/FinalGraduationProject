@@ -80,7 +80,7 @@ Route::post('/updateSettings', [ApiMessagesController::class, 'updateSettings'])
 //////////////////////////////////////////////////////////////////////////////////
 /// image API/////
     Route::get('students',[StudentController::class,'index']);
-    Route::post('add-student',[StudentController::class,'store']);
+   // Route::post('add-student',[StudentController::class,'store']);
     Route::get('/students/{id}',[StudentController::class,'show']);
     Route::delete('/students/{id}',[StudentController::class,'destroy']);
     Route::post('/students/{id}',[StudentController::class,'update']);
@@ -93,3 +93,4 @@ Route::post('/updateSettings', [ApiMessagesController::class, 'updateSettings'])
 
     Route::post('qrcode',[QrController::class,'create'])->name('qr');
 });
+Route::post('add-student',[StudentController::class,'store']);

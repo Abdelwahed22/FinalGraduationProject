@@ -18,13 +18,14 @@ class AuthCheck
      */
     public function handle(Request $request, Closure $next): Response
     {
-            if($request->user()){
-                $user=User::find($request->user()->id);
-                if($user->Active=="Un-Active"){
-                    $request->user()->currentAccessToken()->delete();
-                    return ApiResponse::sendResponse(404,"you are blocked",null);
-                }
+        if($request->user()){
+            $user=User::find($request->user()->id);
+            if($user->Active=="blocked"){
+                $request->user()->currentAccessToken()->delete();
+
+                return ApiResponse::sendResponse(404,"you are blocked",null);
             }
+        }
         return $next($request);
     }
 }
